@@ -62,13 +62,21 @@
             {{-- Dropdown --}}
             <div id="user-menu"
               class="hidden absolute top-12 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-              <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
-              <form action="{{ route('logout') }}" method="POST" class="block">
+
+            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                Pesanan Saya
+            </a>
+
+            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                Profile
+            </a>
+
+            <form action="{{ route('logout') }}" method="POST" class="block">
                 @csrf
                 <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
                   Logout
                 </button>
-              </form>
+            </form>
             </div>
           </div>
         @else
@@ -94,7 +102,7 @@
   <script>
     const userMenuBtn = document.getElementById('user-menu-button');
     const userMenu = document.getElementById('user-menu');
-    
+
     if (userMenuBtn && userMenu) {
       userMenuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -116,7 +124,7 @@
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 2500);
       });
-    }); 
+    });
   </script>
 
   <style>

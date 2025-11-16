@@ -11,17 +11,17 @@ use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
-Route::get('/', [HomeController::class, 'index'])->name('customer.home');
+Route::get('/', [HomeController::class, 'index'])->name('landing');
 
 // Monitoring & Health Check Routes
 Route::controller(MetricsController::class)->group(function () {
-    Route::get('/metrics', 'metrics')->name('metrics')->withoutMiddleware('web');
+    Route::get('/metrics', 'metrics')->name('metrics')->withoutMiddleware('web')->name('metrics');
     Route::get('/health', 'health')->name('health');
     Route::get('/ready', 'ready')->name('ready');
     Route::get('/alive', 'alive')->name('alive');
 });
 
-// Authentication
+// Authentication (Guest Only)
 Route::middleware('guest')->group(function () {
 
     // Login
@@ -54,27 +54,38 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 
-// Protected Routes (Authenticated - Customer)
-Route::middleware(['auth', 'check_role:customer'])->group(function () {
+// Customer Auth Routes
+Route::middleware(['auth', 'check_role:customer,admin'])->group(function () {
+
+    //Home & Products
     Route::prefix('customer')->controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('customer.home');
         Route::get('/products', 'products')->name('customer.products');
     });
+
+    // Product Detail
+    Route::get('/product/{id}', [ProductController::class, 'show'])->name('customer.product.detail');
 });
 
 // Order Routes
-Route::middleware('auth')->prefix('order')->controller(OrderController::class)->group(function () {
-    Route::get('/direct/{product}', 'createDirect')->name('orders.create-direct');
-    Route::post('/direct/{product}', 'storeDirect')->name('orders.store-direct');
+Route::middleware('auth')->prefix('orders')->controller(OrderController::class)->group(function () {
+
+    // Order List
+    Route::get('/', 'index')->name('orders.index');
+
+    // Order Detail
     Route::get('/{order}', 'show')->name('orders.show');
 
-    Route::get('/order/from-cart', [OrderController::class, 'createFromCart'])
-        ->name('orders.create-from-cart');
-    Route::post('/order/from-cart', [OrderController::class, 'storeFromCart'])
-        ->name('orders.store-from-cart');
+    // Order Directly
+    Route::get('/direct/{product}', 'createDirect')->name('orders.direct.create');
+    Route::post('/direct/{product}', 'storeDirect')->name('orders.direct.store');
 
-    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+    // Order from cart
+    Route::get('/from-cart', 'createFromCart')->name('orders.cart.create');
+    Route::post('/from-cart', 'storeFromCart')->name('orders.cart.store');
+
 });
+
 
 // Cart Routes
 Route::middleware('auth')->prefix('cart')->controller(CartController::class)->group(function () {
@@ -82,15 +93,11 @@ Route::middleware('auth')->prefix('cart')->controller(CartController::class)->gr
     Route::post('/add/{product}', 'add')->name('cart.add');
     Route::post('update/{cartItem}', 'update')->name('cart.update');
     Route::delete('remove/{cartItem}', 'remove')->name('cart.remove');
-    // Route::delete('clear', 'clear')->name('cart.clear');
 });
 
-
-// Route::get('/cart', [CartController::class,   'index'])->name('cart.index');
-
+// Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
 
-Route::get('/product/{id}', [ProductController::class, 'show'])->name('customer.product.detail');
