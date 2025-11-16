@@ -22,7 +22,7 @@
       <div class="hidden md:flex items-center gap-8">
         <a href="{{ route('customer.home') }}" class="text-gray-700 hover:text-blue-600 transition">Home</a>
         <a href="{{ route('customer.products') }}" class="text-gray-700 hover:text-blue-600 transition">Products</a>
-        <a href="#" class="text-gray-700 hover:text-blue-600 transition">About</a>
+        <a href="{{ route('customer.about') }}" class="text-gray-700 hover:text-blue-600 transition">About</a>
       </div>
 
       {{-- User Profile / Auth Section --}}
@@ -62,6 +62,11 @@
             {{-- Dropdown --}}
             <div id="user-menu"
               class="hidden absolute top-12 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+
+            <a href="{{ route('filament.admin.pages.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Masuk Admin
+            </a>
+
 
             <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                 Pesanan Saya
