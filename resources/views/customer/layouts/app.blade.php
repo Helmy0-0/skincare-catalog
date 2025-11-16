@@ -45,7 +45,7 @@
             @endif
           </a>
           <div class="relative flex justify-end">
-            <button id="user-menu-button" class="flex items-center gap-2 focus:outline-none">
+            <button id="user-menu-button" class="flex items-center gap-2 focus:outline-none cursor-pointer">
               <div class="text-right hidden sm:block">
                 <p class="text-sm font-semibold text-gray-800">{{ Auth::user()->name }}</p>
                 <p class="text-xs text-gray-500">{{ Auth::user()->role }}</p>
@@ -54,14 +54,14 @@
                 class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold hover:bg-blue-200 transition-colors">
                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
               </div>
-              <svg class="w-4 h-4 text-gray-500 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-gray-500 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {{-- Dropdown --}}
             <div id="user-menu"
-              class="hidden absolute top-12 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
+              class="hidden absolute top-12 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
               <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
               <form action="{{ route('logout') }}" method="POST" class="block">
                 @csrf
@@ -94,9 +94,17 @@
   <script>
     const userMenuBtn = document.getElementById('user-menu-button');
     const userMenu = document.getElementById('user-menu');
+    
     if (userMenuBtn && userMenu) {
-      userMenuBtn.addEventListener('click', () => {
+      userMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         userMenu.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
+          userMenu.classList.add('hidden');
+        }
       });
     }
 

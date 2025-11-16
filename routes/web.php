@@ -52,11 +52,7 @@ Route::get('/auth-google-callback', [AuthController::class, 'google_callback']);
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Protected Routes (Authenticated - Admin)
-Route::middleware(['auth', 'check_role:admin'])->group(function () {
-    Route::get('/dashboard', [ProductController::class, 'index'])->name('dashboard.index');
-    Route::resource('products', ProductController::class);
-});
+
 
 // Protected Routes (Authenticated - Customer)
 Route::middleware(['auth', 'check_role:customer'])->group(function () {

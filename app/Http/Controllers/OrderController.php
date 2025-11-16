@@ -142,6 +142,25 @@ class OrderController extends Controller
                 // Update stok
                 $cartItem->product->decrement('stock', $cartItem->quantity);
             }
+            // Build product list message
+            $productList = "";
+            foreach ($cart->items as $item) {
+                $productList .= "- {$item->product->name} x{$item->quantity}\n";
+            }
+
+            $message = "🛒 Pesanan Baru!\n\n" .
+                "Order ID: #{$order->id}\n" .
+                "Produk:\n{$productList}" .
+                "Total: Rp " . number_format($order->total_amount, 0, ',', '.') . "\n\n" .
+                "Cek detail di dashboard admin.";
+
+            $whatsappService = new WhatsappService();
+            $response = $whatsappService->sendMessageToAdmin($message);
+
+            Log::info('WhatsApp notification sent', [
+                'order_id' => $order->id,
+                'response' => $response
+            ]);
 
             $cart->items()->delete();
 

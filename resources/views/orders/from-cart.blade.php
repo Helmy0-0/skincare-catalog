@@ -12,7 +12,7 @@
             <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg mb-3">
                 <div class="flex gap-4 flex-1">
                     @if($item->product->image)
-                    <img src="{{ asset('storage/' . $item->product->image) }}" 
+                    <img src="{{ asset($item->product->image_url) }}" 
                          alt="{{ $item->product->name }}" 
                          class="w-16 h-16 object-cover rounded">
                     @endif

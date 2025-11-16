@@ -15,9 +15,16 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (in_array($request->user()?->role, $roles)) {
-            return $next($request);
+        // Check if user is authenticated
+        if (!$request->user()) {
+            abort(403, 'Unauthorized action.');
         }
-        abort(403);
+
+        // Check if user has the required role
+        if (!in_array($request->user()->role, $roles)) {
+            abort(403);
+        }
+
+        return $next($request);
     }
 }
