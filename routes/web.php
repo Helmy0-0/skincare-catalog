@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('landing');
 
+
+Route::get('/customer/about', fn() => view('customer.about'))->name('customer.about');
+
 // Monitoring & Health Check Routes
 Route::controller(MetricsController::class)->group(function () {
     Route::get('/metrics', 'metrics')->name('metrics')->withoutMiddleware('web')->name('metrics');
@@ -62,6 +65,8 @@ Route::middleware(['auth', 'check_role:customer,admin'])->group(function () {
         Route::get('/', 'index')->name('customer.home');
         Route::get('/products', 'products')->name('customer.products');
     });
+
+    Route::get('/about', fn() => view('customer.about'))->name('customer.about');
 
     // Product Detail
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('customer.product.detail');
