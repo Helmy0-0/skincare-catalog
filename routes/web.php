@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('landing');
 
-
-Route::get('/customer/about', fn() => view('customer.about'))->name('customer.about');
-
 // Monitoring & Health Check Routes
 Route::controller(MetricsController::class)->group(function () {
     Route::get('/metrics', 'metrics')->name('metrics')->withoutMiddleware('web')->name('metrics');
@@ -26,7 +23,6 @@ Route::controller(MetricsController::class)->group(function () {
 
 // Authentication (Guest Only)
 Route::middleware('guest')->group(function () {
-
     // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -40,13 +36,11 @@ Route::middleware('guest')->group(function () {
         Route::get('/forgot-password', 'showForm')->name('password.request');
         Route::post('/forgot-password', 'sendResetLink')->name('password.email');
     });
-
     Route::controller(ResetPasswordController::class)->group(function () {
         Route::get('/reset-password/{token}', 'showResetForm')->name('password.reset');
         Route::post('/reset-password', 'updatePassword')->name('password.update');
     });
 });
-
 
 // Google OAuth
 Route::get('/auth-google-redirect', [AuthController::class, 'google_redirect']);
@@ -55,11 +49,8 @@ Route::get('/auth-google-callback', [AuthController::class, 'google_callback']);
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-
 // Customer Auth Routes
 Route::middleware(['auth', 'check_role:customer,admin'])->group(function () {
-
     //Home & Products
     Route::prefix('customer')->controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('customer.home');
@@ -73,24 +64,19 @@ Route::middleware(['auth', 'check_role:customer,admin'])->group(function () {
 });
 
 // Order Routes
-Route::middleware('auth')->prefix('orders')->controller(OrderController::class)->group(function () {
-
-    // Order List
-    Route::get('/', 'index')->name('orders.index');
-
-    // Order Detail
+// Order Routes
+Route::middleware('auth')->prefix('order')->controller(OrderController::class)->group(function () {
+    Route::get('/direct/{product}', 'createDirect')->name('orders.create-direct');
+    Route::post('/direct/{product}', 'storeDirect')->name('orders.store-direct');
     Route::get('/{order}', 'show')->name('orders.show');
 
-    // Order Directly
-    Route::get('/direct/{product}', 'createDirect')->name('orders.direct.create');
-    Route::post('/direct/{product}', 'storeDirect')->name('orders.direct.store');
+    Route::get('/order/from-cart', [OrderController::class, 'createFromCart'])
+        ->name('orders.create-from-cart');
+    Route::post('/order/from-cart', [OrderController::class, 'storeFromCart'])
+        ->name('orders.store-from-cart');
 
-    // Order from cart
-    Route::get('/from-cart', 'createFromCart')->name('orders.cart.create');
-    Route::post('/from-cart', 'storeFromCart')->name('orders.cart.store');
-
+    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
 });
-
 
 // Cart Routes
 Route::middleware('auth')->prefix('cart')->controller(CartController::class)->group(function () {
@@ -98,6 +84,7 @@ Route::middleware('auth')->prefix('cart')->controller(CartController::class)->gr
     Route::post('/add/{product}', 'add')->name('cart.add');
     Route::post('update/{cartItem}', 'update')->name('cart.update');
     Route::delete('remove/{cartItem}', 'remove')->name('cart.remove');
+    // Route::delete('clear', 'clear')->name('cart.clear');
 });
 
 // Profile Routes
@@ -105,4 +92,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
-
