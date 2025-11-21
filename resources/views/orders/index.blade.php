@@ -119,7 +119,7 @@
                 </div>
                 <h3 class="text-xl font-semibold text-gray-800 mb-2">Belum Ada Pesanan</h3>
                 <p class="text-gray-600 mb-6">Anda belum melakukan pemesanan apapun</p>
-                <a href="{{ route('products.index') }}" 
+                <a href="{{ route('orders.index') }}" 
                    class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                     Mulai Belanja
                 </a>
