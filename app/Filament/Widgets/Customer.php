@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
+use App\Models\User;
 
 class Customer extends ChartWidget
 {
@@ -10,12 +11,22 @@ class Customer extends ChartWidget
 
     protected function getData(): array
     {
+        $user = User::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $data = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $data[] = $user[$i] ?? 0;
+        }
         return [
             'datasets' => [
                 [
                     'label' => 'Customers',
-                    'data' => [0, 10, 15, 22, 28, 32, 45, 70, 85, 95, 100, 106],
-                ],
+                    'data' => $data,
+                ],  
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         ];

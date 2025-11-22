@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
+use App\Models\Order;
 
 class Orders extends ChartWidget
 {
@@ -10,11 +11,21 @@ class Orders extends ChartWidget
 
     protected function getData(): array
     {
+        $orders = Order::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $data = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $data[] = $orders[$i] ?? 0;
+        }
         return [
             'datasets' => [
                 [
                     'label' => 'Orders',
-                    'data' => [0, 10, 5, 2, 21, 32, 45, 74, 65, 45, 77, 89],
+                    'data' => $data,
                 ],
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -25,4 +36,19 @@ class Orders extends ChartWidget
     {
         return 'line';
     }
+
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'ticks' => [
+                        'precision' => 0, // Force integer ticks
+                        'beginAtZero' => true,
+                    ],
+                ],
+            ],
+        ];
+    }
+
 }
