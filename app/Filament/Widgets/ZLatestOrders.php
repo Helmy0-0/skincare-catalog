@@ -8,6 +8,8 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Order;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\OrderExporter;
 
 class ZLatestOrders extends TableWidget
 {
@@ -49,7 +51,7 @@ class ZLatestOrders extends TableWidget
                 //
             ])
             ->headerActions([
-                //
+                ExportAction::make()->exporter(OrderExporter::class),
             ])
             ->recordActions([
                 //
