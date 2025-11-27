@@ -63,10 +63,11 @@
             <div id="user-menu"
               class="hidden absolute top-12 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
 
+            @if (Auth::user()->role === 'admin')
             <a href="{{ route('filament.admin.pages.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                     Masuk Admin
             </a>
-
+             @endif
 
             <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                 Pesanan Saya

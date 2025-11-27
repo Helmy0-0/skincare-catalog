@@ -155,7 +155,7 @@
                 <p class="text-blue-600 font-bold text-base mt-3">
                   Rp{{ number_format($product->price, 0, ',', '.') }}
                 </p>
-                <p class="text-sm text-gray-500 mt-1">Terjual: {{ $product->total_sold }}</p>
+                <p class="text-sm text-gray-500 mt-1">Terjual: {{$product->order_items_sum_quantity ?? 0  }}</p>
               </div>
             </div>
           </a>
