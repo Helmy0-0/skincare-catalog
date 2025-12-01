@@ -9,6 +9,8 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\AwsS3V3\PortableVisibilityConverter;
 use Aws\S3\S3Client;
+use App\Models\Order;
+use App\Observers\OrderObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Order Observer
+        Order::observe(OrderObserver::class);
+        
         // Configure S3 for Cloudflare R2 with SSL verification disabled
         Storage::extend('r2', function ($app, $config): FilesystemAdapter {
             $client = new S3Client([
