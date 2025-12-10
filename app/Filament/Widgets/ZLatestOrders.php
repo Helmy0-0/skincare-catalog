@@ -13,7 +13,7 @@ use App\Filament\Exports\OrderExporter;
 
 class ZLatestOrders extends TableWidget
 {
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
     protected static ?string $heading = 'Latest Order';
     public function table(Table $table): Table
     {
@@ -23,29 +23,29 @@ class ZLatestOrders extends TableWidget
             })
             ->columns([
                 TextColumn::make('order_date')
-                ->label('Tanggal Order')
-                ->dateTime('d/m/Y H:i')
-                ->sortable(),
+                    ->label('Tanggal Order')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
 
                 TextColumn::make('user.name')
-                ->label('Nama Pelanggan')
-                ->searchable()
-                ->sortable(),
+                    ->label('Nama Pelanggan')
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('total_amount')
-                ->label('Total')
-                ->money('idr')
-                ->sortable(),
+                    ->label('Total')
+                    ->money('idr')
+                    ->sortable(),
 
                 TextColumn::make('status')
-                ->label('Status')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'proses' => 'warning',
-                    'dikirim' => 'info',
-                    'selesai' => 'success',
-                    default => 'gray'
-                }),
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'proses' => 'warning',
+                        'dikirim' => 'info',
+                        'selesai' => 'success',
+                        default => 'gray'
+                    }),
             ])
             ->filters([
                 //

@@ -16,6 +16,20 @@ class OrderObserver
     }
 
     /**
+     * Handle the Order "created" event.
+     */
+    public function created(Order $order): void
+    {
+        $discount = $order->total_amount * 0.5;
+        $finalTotal = $order->total_amount - $discount;
+
+        $order->update([
+            'discount' => $discount,
+            'final_total' => $finalTotal
+        ]);
+    }
+
+    /**
      * Handle the Order "updated" event.
      */
     public function updated(Order $order): void
@@ -33,7 +47,7 @@ class OrderObserver
     {
         try {
             $user = $order->user;
-            
+
             // Pastikan user punya nomor WhatsApp
             if (!$user || !$user->phone) {
                 Log::warning("Order #{$order->id}: User tidak memiliki nomor WhatsApp");
@@ -64,14 +78,19 @@ class OrderObserver
     protected function generateStatusMessage(Order $order, $user): string
     {
         $totalAmount = (float) $order->total_amount;
+        $discount = (float) $order->discount;
+        $finalTotal = (float) $order->final_total;
+
         $formattedTotal = number_format($totalAmount, 0, ',', '.');
-        
+        $formattedDiscount = number_format($discount, 0, ',', '.');
+        $formattedFinal = number_format($finalTotal, 0, ',', '.');
+
         $statusMessages = [
-            'proses' => "🔄 *Status Pesanan Diperbarui*\n\nHalo {$user->name},\n\nPesanan Anda dengan nomor *#{$order->id}* sedang dalam proses.\n\n📅 Tanggal Order: {$order->order_date->format('d/m/Y')}\n💰 Total: Rp {$formattedTotal}\n\nTerima kasih telah berbelanja! 🙏",
-            
-            'dikirim' => "🚚 *Pesanan Sedang Dikirim*\n\nHalo {$user->name},\n\nKabar baik! Pesanan Anda dengan nomor *#{$order->id}* sudah dikirim.\n\n📅 Tanggal Order: {$order->order_date->format('d/m/Y')}\n💰 Total: Rp {$formattedTotal}\n\nMohon ditunggu ya! 📦",
-            
-            'selesai' => "✅ *Pesanan Selesai*\n\nHalo {$user->name},\n\nPesanan Anda dengan nomor *#{$order->id}* telah selesai.\n\n📅 Tanggal Order: {$order->order_date->format('d/m/Y')}\n💰 Total: Rp {$formattedTotal}\n\nTerima kasih telah berbelanja dengan kami! 💚\n\nSemoga Anda puas dengan produk kami. 😊"
+            'proses' => "🔄 *Status Pesanan Diperbarui*\n\nHalo {$user->name},\n\nPesanan Anda dengan nomor *#{$order->id}* sedang dalam proses.\n\n📅 Tanggal Order: {$order->order_date->format('d/m/Y')}\n💰 Total: Rp {$formattedTotal}\n🎁 Diskon: Rp {$formattedDiscount}\n✨ Total Bayar: Rp {$formattedFinal}\n\nTerima kasih telah berbelanja! 🙏",
+
+            'dikirim' => "🚚 *Pesanan Sedang Dikirim*\n\nHalo {$user->name},\n\nKabar baik! Pesanan Anda dengan nomor *#{$order->id}* sudah dikirim.\n\n📅 Tanggal Order: {$order->order_date->format('d/m/Y')}\n💰 Total: Rp {$formattedTotal}\n🎁 Diskon: Rp {$formattedDiscount}\n✨ Total Bayar: Rp {$formattedFinal}\n\nMohon ditunggu ya! 📦",
+
+            'selesai' => "✅ *Pesanan Selesai*\n\nHalo {$user->name},\n\nPesanan Anda dengan nomor *#{$order->id}* telah selesai.\n\n📅 Tanggal Order: {$order->order_date->format('d/m/Y')}\n💰 Total: Rp {$formattedTotal}\n🎁 Diskon: Rp {$formattedDiscount}\n✨ Total Bayar: Rp {$formattedFinal}\n\nTerima kasih telah berbelanja dengan kami! 💚\n\nSemoga Anda puas dengan produk kami. 😊"
         ];
 
         return $statusMessages[$order->status] ?? "Status pesanan Anda telah diperbarui menjadi: {$order->status}";

@@ -13,6 +13,8 @@ class Order extends Model
         'order_date',
         'status',
         'total_amount',
+        'discount',
+        'final_total',
     ];
 
     protected $casts = [

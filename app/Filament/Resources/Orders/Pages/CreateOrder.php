@@ -8,4 +8,18 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateOrder extends CreateRecord
 {
     protected static string $resource = OrderResource::class;
+
+    // protected function afterCreate(): void
+    // {
+    //     $order = $this->record;
+
+    //     $discountPercentage = 10;
+
+    //     $discount = $order->total * $discountPercentage / 100;
+
+    //     $order->update([
+    //         'discount' => $discount,
+    //         'final_total' => $order->total - $discount
+    //     ]);
+    // }
 }
